@@ -1,3 +1,19 @@
+#if $root_folder.parent
+<a href="#echo $root_folder.parent.stub_name() + '.html'# ">$root_folder.parent.name</a>
+#end if
+
+<h1>$root_folder.name</h1>
+
+#if $root_folder.child_folders
+<h2>Folders</h2>
 #for $folder in $root_folder.child_folders
-<a href="<%=folder.stub_name()%>.html">$folder.name</a><br/>
+<a href="#echo folder.stub_name() + '.html'# ">$folder.name</a> (<%=len(folder.child_photos)%>)<br/>
 #end for
+#end if
+
+#if $root_folder.child_photos
+<h2>Photos</h2>
+#for $photo in $root_folder.child_photos
+<img src="$photo.path" width="600px"/><br/><br/>
+#end for
+#end if

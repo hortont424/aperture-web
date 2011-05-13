@@ -7,6 +7,7 @@ import os
 from Cheetah.Template import Template
 
 OUTPUT_FOLDER = "output"
+MASTERS_FOLDER = "/Volumes/MCP/Pictures/Aperture Library.aplibrary/Masters"
 
 non_alphanum_regex = re.compile('[\W_]+')
 
@@ -22,7 +23,7 @@ class Folder(object):
         self.parent_uuid = ""
         self.parent = None
         self.child_folders = []
-        self.child_images = []
+        self.child_photos = []
     
     def __unicode__(self):
         return u"<Folder({0})>".format(self.name)
@@ -99,7 +100,7 @@ def load_folders(c):
     return folders
 
 def print_folders(root, depth=0):
-    print ("  " * depth) + root.name, len(root.child_images)
+    print ("  " * depth) + root.name, len(root.child_photos)
     for folder in root.child_folders:
         print_folders(folder, depth + 1)
 
@@ -115,14 +116,14 @@ def load_photos(c, folders):
         photo.uuid = row[1]
         photo.name = row[2]
         photo.parent = folders[row[3]]
-        photo.path = row[17]
+        photo.path = os.path.join(MASTERS_FOLDER, row[17])
         photo.size = row[18]
         
         if row[21]:
             photo.date = datetime.datetime.fromtimestamp(row[21] + 978307200)
         
         photos[photo.id] = photo
-        photo.parent.child_images.append(photo)
+        photo.parent.child_photos.append(photo)
     
     return photos
 
@@ -154,13 +155,16 @@ def generate_folder_indices(folders):
         templ = Template(file="folder_index.tmpl")
         templ.root_folder = folder
         
-        out_file = open(os.path.join(OUTPUT_FOLDER, folder.stub_name() + ".html"), "w")
+        out_file_name = os.path.join(OUTPUT_FOLDER, folder.stub_name() + ".html")
+        out_file = open(out_file_name, "w")
         out_file.write(str(templ))
         out_file.close()
+        
+        print "Generated", out_file_name
     
     def recurse_folders(folder):
         generate_folder_index(folder)
-        [recurse_folders(child) for child in folder.child_folders]
+        map(recurse_folders, folder.child_folders)
         
     recurse_folders(folders["AllProjectsItem"])
 
