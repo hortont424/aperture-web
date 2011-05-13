@@ -1,7 +1,6 @@
 import sqlite3
 import datetime
 import re
-import string
 import os
 
 from Cheetah.Template import Template
@@ -9,10 +8,10 @@ from Cheetah.Template import Template
 OUTPUT_FOLDER = "output"
 MASTERS_FOLDER = "/Volumes/MCP/Pictures/Aperture Library.aplibrary/Masters"
 
-non_alphanum_regex = re.compile('[\W_]+')
+NON_ALPHANUM_REGEX = re.compile('[\W_]+')
 
-def alphanum(s):
-    return non_alphanum_regex.sub("", s)
+def alphanum(name):
+    return NON_ALPHANUM_REGEX.sub("", name)
 
 class Folder(object):
     def __init__(self):
@@ -92,7 +91,7 @@ def load_folders(c):
         
         folders[folder.uuid] = folder
     
-    for (uuid, folder) in folders.items():
+    for folder in folders.values():
         if folder.parent_uuid:
             folder.parent = folders[folder.parent_uuid]
             folders[folder.parent_uuid].child_folders.append(folder)
@@ -164,7 +163,7 @@ def generate_folder_indices(folders):
     
     def recurse_folders(folder):
         generate_folder_index(folder)
-        map(recurse_folders, folder.child_folders)
+        [recurse_folders(f) for f in folder.child_folders]
         
     recurse_folders(folders["AllProjectsItem"])
 
