@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import sqlite3
 import datetime
 import re
@@ -7,6 +9,7 @@ from Cheetah.Template import Template
 
 OUTPUT_FOLDER = "output"
 MASTERS_FOLDER = "/Volumes/MCP/Pictures/Aperture Library.aplibrary/Masters"
+PREVIEWS_FOLDER = "/Volumes/MCP/Pictures/Aperture Library.aplibrary/Previews"
 
 NON_ALPHANUM_REGEX = re.compile('[\W_]+')
 
@@ -53,11 +56,31 @@ class Photo(object):
         self.parent = None
         self.keywords = []
         self.date = None
+        self.base_path = ""
         self.path = ""
         self.size = 0
+        self.child_versions = []
     
     def __unicode__(self):
         return u"<Photo({0}) in {1}>".format(self.name, self.parent.name)
+
+    def __str__(self):
+        return unicode(self).encode('utf-8')
+
+class Version(object):
+    def __init__(self):
+        super(Version, self).__init__()
+        
+        self.id = 0
+        self.uuid = ""
+        self.name = ""
+        self.filename = ""
+        self.preview_path = ""
+        self.thumb_path = ""
+        self.parent = None
+            
+    def __unicode__(self):
+        return u"<Version({0})>".format(self.name)
 
     def __str__(self):
         return unicode(self).encode('utf-8')
@@ -104,7 +127,8 @@ def print_folders(root, depth=0):
         print_folders(folder, depth + 1)
 
 def load_photos(c, folders):
-    photos = {}
+    photos_id = {}
+    photos_uuid = {}
     
     c.execute("select * from RKMaster")
     
@@ -115,16 +139,40 @@ def load_photos(c, folders):
         photo.uuid = row[1]
         photo.name = row[2]
         photo.parent = folders[row[3]]
-        photo.path = os.path.join(MASTERS_FOLDER, row[17])
+        photo.base_path = row[17]
+        photo.path = os.path.join(MASTERS_FOLDER, row[17]).replace("%", "%25")
         photo.size = row[18]
         
         if row[21]:
             photo.date = datetime.datetime.fromtimestamp(row[21] + 978307200)
         
-        photos[photo.id] = photo
+        photos_id[photo.id] = photo
+        photos_uuid[photo.uuid] = photo
         photo.parent.child_photos.append(photo)
     
-    return photos
+    return (photos_id, photos_uuid)
+
+def load_versions(c, photos):
+    versions = {}
+    
+    c.execute("select * from RKVersion")
+    
+    for row in c:
+        version = Version()
+        
+        version.id = row[0]
+        version.uuid = row[1]
+        version.name = row[2]
+        version.filename = row[3]
+        version.number = row[4]
+        version.parent = photos[row[6]]
+        version.preview_path = os.path.join(PREVIEWS_FOLDER, os.path.dirname(version.parent.base_path), version.uuid, version.name + ".jpg").replace("%", "%25")
+        version.thumb_path = os.path.join(PREVIEWS_FOLDER, os.path.dirname(version.parent.base_path), version.uuid, "thumb_" + version.name + ".jpg").replace("%", "%25")
+        
+        versions[version.id] = version
+        version.parent.child_versions.append(version)
+    
+    return versions
 
 def load_keywords(c):
     keywords = {}
@@ -174,9 +222,10 @@ def main():
 
     folders = load_folders(c)
     keywords = load_keywords(c)
-    photos = load_photos(c, folders)
+    (photos_id, photos_uuid) = load_photos(c, folders)
     
-    apply_keywords(c, keywords, photos)
+    versions = load_versions(c, photos_uuid)
+    apply_keywords(c, keywords, photos_id)
     
     generate_folder_indices(folders)
     
