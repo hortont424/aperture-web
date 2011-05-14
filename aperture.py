@@ -229,6 +229,16 @@ def main():
     
     generate_folder_indices(folders)
     
+    # tree!
+    
+    templ = Template(file="tree.tmpl")
+    templ.root_folder = folders["AllProjectsItem"]
+    
+    out_file_name = os.path.join(OUTPUT_FOLDER, "asdf.html")
+    out_file = open(out_file_name, "w")
+    out_file.write(str(templ))
+    out_file.close()
+    
     #for photo in photos.values():
     #    print photo, photo.date
     
