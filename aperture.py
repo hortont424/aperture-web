@@ -115,7 +115,8 @@ def load_folders(c):
         folder.name = row[3].strip()
         folder.parent_uuid = row[4]
         
-        folders[folder.uuid] = folder
+        if folder.name != "Library Albums":
+            folders[folder.uuid] = folder
     
     for folder in folders.values():
         if folder.parent_uuid:
