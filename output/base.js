@@ -1,29 +1,3 @@
-<html>
-<head>
-    <script type="text/javascript" src="jquery.js"></script>
-    <script type="text/javascript" src="jquery.jstree.js"></script>
-    <link type="text/css" rel="stylesheet" href="style.css"/>
-</head>
-<body>
-<div id="demo1" class="demo" style="height:100px;">
-    <ul>
-        <li id="phtml_1">
-            <a href="#">Root node 1</a>
-            <ul>
-                <li id="phtml_2">
-                    <a href="#">Child node 1</a>
-                </li>
-                <li id="phtml_3">
-                    <a href="#">Child node 2</a>
-                </li>
-            </ul>
-        </li>
-        <li id="phtml_4">
-            <a href="#">Root node 2</a>
-        </li>
-    </ul>
-</div>
-<script type="text/javascript" class="source below">
 $(function () {
     // TO CREATE AN INSTANCE
     // select the tree container using jQuery
@@ -33,7 +7,7 @@ $(function () {
             // the `plugins` array allows you to configure the active plugins on this instance
             "plugins" : ["html_data","ui","crrm"],
             // each plugin you have included can have its own config object
-            "core" : { "initially_open" : [ "phtml_1" ] }
+            "core" : { "initially_open" : [ "phtml" ] }
             // it makes sense to configure a plugin only if overriding the defaults
         })
         // EVENTS
@@ -45,6 +19,8 @@ $(function () {
         });
 
 });
-</script>
-</body>
-</html>
+
+window.onload = function() {
+  document.onselectstart = function() {return false;} // ie
+  document.onmousedown = function() {return false;} // mozilla
+}

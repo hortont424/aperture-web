@@ -1,0 +1,33 @@
+<html>
+<head>
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="jquery.jstree.js"></script>
+    <link type="text/css" rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+#def generateFolderList($folder, $top=False)
+#if $top
+<li id="phtml">
+#else
+<li>
+#end if
+    <a href="#">$folder.name</a>
+    <ul>
+    #for $subfolder in $folder.child_folders
+        $generateFolderList($subfolder)
+    #end for
+    </ul>
+</li>
+#end def
+
+<div id="demo1" class="demo" style="height:100px;">
+    <ul>
+        #for $folder in $root_folder.child_folders
+            $generateFolderList($folder, True)
+        #end for
+    </ul>
+</div>
+<script type="text/javascript" src="base.js"></script>
+</body>
+</html>

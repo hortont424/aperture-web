@@ -33,6 +33,9 @@ class Folder(object):
     def __str__(self):
         return unicode(self).encode('utf-8')
     
+    def __lt__(self, other):
+        return self.name < other.name
+    
     def stub_name(self):
         stub_components = [alphanum(self.name.lower())]
         
@@ -109,7 +112,7 @@ def load_folders(c):
         folder = Folder()
         
         folder.uuid = row[1]
-        folder.name = row[3]
+        folder.name = row[3].strip()
         folder.parent_uuid = row[4]
         
         folders[folder.uuid] = folder
@@ -227,14 +230,17 @@ def main():
     versions = load_versions(c, photos_uuid)
     apply_keywords(c, keywords, photos_id)
     
-    generate_folder_indices(folders)
+    for folder in folders.values():
+        folder.child_folders.sort()
+    
+    #######generate_folder_indices(folders)
     
     # tree!
     
     templ = Template(file="tree.tmpl")
     templ.root_folder = folders["AllProjectsItem"]
     
-    out_file_name = os.path.join(OUTPUT_FOLDER, "asdf.html")
+    out_file_name = os.path.join(OUTPUT_FOLDER, "index.html")
     out_file = open(out_file_name, "w")
     out_file.write(str(templ))
     out_file.close()
