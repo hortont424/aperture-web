@@ -4,12 +4,13 @@ import sqlite3
 import datetime
 import re
 import os
+import json
 
 from Cheetah.Template import Template
 
 OUTPUT_FOLDER = "output"
 MASTERS_FOLDER = "/Volumes/MCP/Pictures/Aperture Library.aplibrary/Masters"
-PREVIEWS_FOLDER = "/Volumes/MCP/Pictures/Aperture Library.aplibrary/Previews"
+PREVIEWS_FOLDER = "previews"
 
 NON_ALPHANUM_REGEX = re.compile('[\W_]+')
 
@@ -203,15 +204,17 @@ def apply_keywords(c, keywords, photos):
 
 def generate_folder_indices(folders):
     def generate_folder_index(folder):    
-        templ = Template(file="folder_index.tmpl")
-        templ.root_folder = folder
+        folder_object = []
         
-        out_file_name = os.path.join(OUTPUT_FOLDER, folder.stub_name() + ".html")
+        for photo in folder.child_photos:
+            for version in photo.child_versions:
+                if version.number > 0:
+                    folder_object.append(version.thumb_path)
+        
+        out_file_name = os.path.join(OUTPUT_FOLDER, folder.stub_name() + ".js")
         out_file = open(out_file_name, "w")
-        out_file.write(str(templ))
+        out_file.write(json.dumps(folder_object))
         out_file.close()
-        
-        print "Generated", out_file_name
     
     def recurse_folders(folder):
         generate_folder_index(folder)
@@ -234,7 +237,7 @@ def main():
     for folder in folders.values():
         folder.child_folders.sort()
     
-    #######generate_folder_indices(folders)
+    generate_folder_indices(folders)
     
     # tree!
     

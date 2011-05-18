@@ -4,6 +4,8 @@
  * Supported plugins: ui (hovered, clicked), checkbox, contextmenu, search
  */
 
+* { font-family: "Lucida Grande"; font-size: 10pt; }
+
 .jstree li, 
 .jstree ins { background-image:url("d.png"); background-repeat:no-repeat; background-color:transparent; }
 .jstree li { background-position:-90px 0; background-repeat:repeat-y;  }
@@ -12,9 +14,9 @@
 .jstree .jstree-closed > ins { background-position:-54px 0; }
 .jstree .jstree-leaf > ins { background-position:-36px 0; }
 
-.jstree a { border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px; text-shadow:1px 1px 1px white; }
-.jstree .jstree-hovered { background:#e7f4f9; border:1px solid #d8f0fa; padding:0 3px 0 1px; text-shadow:1px 1px 1px silver; }
-.jstree .jstree-clicked { background:#beebff; border:1px solid #99defd; padding:0 3px 0 1px; }
+.jstree a { border-radius:4px; -moz-border-radius:4px; -webkit-border-radius:4px; }
+.jstree .jstree-hovered { background:#fff; border:1px solid #ccc; padding:0 3px 0 3px; }
+.jstree .jstree-clicked { background:#ccc; border:1px solid #aaa; padding:0 3px 0 3px; }
 .jstree a .jstree-icon { background-position:-56px -20px; }
 .jstree a.jstree-loading .jstree-icon { background:url("throbber.gif") center center no-repeat !important; }
 
@@ -42,3 +44,9 @@
 
 .jstree a.jstree-search { color:aqua; }
 .jstree .jstree-locked a { color:silver; cursor:default; }
+
+img
+{
+    margin: 8px;
+    -webkit-box-shadow: 2px 2px 3px #000;
+}

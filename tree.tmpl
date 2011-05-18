@@ -7,11 +7,7 @@
 <body>
 
 #def generateFolderList($folder, $top=False)
-#if $top
-<li id="phtml">
-#else
-<li>
-#end if
+<li id="#echo $folder.stub_name() #">
     <a href="#">$folder.name</a>
     <ul>
     #for $subfolder in $folder.child_folders
@@ -21,12 +17,14 @@
 </li>
 #end def
 
-<div id="demo1" class="demo" style="height:100px;">
+<div id="demo1" class="demo" style="position: fixed; top: 0px; left: 0px; width: 300px; bottom: 0px; background-color: #eee; overflow-x: hidden; overflow-y: auto; border-right: 1px solid #999;">
     <ul>
         #for $folder in $root_folder.child_folders
             $generateFolderList($folder, True)
         #end for
     </ul>
+</div>
+<div id="sidebar" style="position:fixed; top:0px; left: 301px; right:0px; bottom: 0px; overflow-y: auto; background-color: #3c3c3c; padding: 10px 20px;">
 </div>
 <script type="text/javascript" src="base.js"></script>
 </body>
