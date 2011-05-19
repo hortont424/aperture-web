@@ -27,9 +27,9 @@ $(function () {
             .success(function(data) {
                 for(var i in data)
                 {
-                    style = "vertical-align: middle; max-height: 100px; overflow:hidden; float: left;";
-                    $("#sidebar").append("<a href='" + data[i][1] + "'><img style='"+style+"' src='" + data[i][1] + "'/></a>");
+                    $("#sidebar").append("<a class='lightbox' href='" + data[i][0] + "'><img class='thumb' src='" + data[i][1] + "'/></a>");
                 }
+                $('a.lightbox').lightBox();
             })
             .error(function() { alert("error"); });
         });

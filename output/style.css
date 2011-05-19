@@ -45,8 +45,12 @@
 .jstree a.jstree-search { color:aqua; }
 .jstree .jstree-locked a { color:silver; cursor:default; }
 
-img
+img.thumb
 {
     margin: 8px;
     -webkit-box-shadow: 2px 2px 3px #000;
+    vertical-align: middle;
+    max-height: 100px;
+    overflow: hidden;
+    float: left;
 }
