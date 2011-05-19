@@ -6,11 +6,15 @@ import re
 import os
 import json
 
+import SimpleHTTPServer
+import SocketServer
+
+from multiprocessing import Process
 from Cheetah.Template import Template
 
 OUTPUT_FOLDER = "output"
-MASTERS_FOLDER = "/Volumes/MCP/Pictures/Aperture Library.aplibrary/Masters"
-PREVIEWS_FOLDER = "previews"
+MASTERS_FOLDER = "http://localhost:9000/Masters"
+PREVIEWS_FOLDER = "http://localhost:9000/Previews"
 
 NON_ALPHANUM_REGEX = re.compile('[\W_]+')
 
@@ -209,7 +213,7 @@ def generate_folder_indices(folders):
         for photo in folder.child_photos:
             for version in photo.child_versions:
                 if version.number > 0:
-                    folder_object.append(version.thumb_path)
+                    folder_object.append([photo.path, version.thumb_path])
         
         out_file_name = os.path.join(OUTPUT_FOLDER, folder.stub_name() + ".js")
         out_file = open(out_file_name, "w")
@@ -249,6 +253,21 @@ def main():
     out_file.write(str(templ))
     out_file.close()
     
+    # web server
+    
+    content_server = Process(target=start_content_server)
+    content_server.start()
+    
+    os.chdir("output")
+
+    class TestServer(SocketServer.TCPServer):
+        allow_reuse_address = True
+
+    httpd = TestServer(("", 8000), SimpleHTTPServer.SimpleHTTPRequestHandler)
+
+    print "Server Ready!"
+    httpd.serve_forever()
+    
     #for photo in photos.values():
     #    print photo, photo.date
     
@@ -256,6 +275,16 @@ def main():
     
     #print sum([photo.size for photo in photos.values()])
 
+def start_content_server():
+    os.chdir("/Volumes/MCP/Pictures/Aperture Library.aplibrary/")
+
+    class TestServer(SocketServer.TCPServer):
+        allow_reuse_address = True
+
+    httpd = TestServer(("", 9000), SimpleHTTPServer.SimpleHTTPRequestHandler)
+
+    print "Content Server Ready!"
+    httpd.serve_forever()
+
 if __name__ == '__main__':
     main()
-    

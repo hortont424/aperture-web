@@ -24,10 +24,11 @@ $(function () {
             $("#sidebar").children().remove();
             
             $.getJSON(data.rslt.obj.attr("id") + ".js")
-            .success(function(data) { 
+            .success(function(data) {
                 for(var i in data)
                 {
-                    $("#sidebar").append("<img src='" + data[i] + "'/>");
+                    style = "vertical-align: middle; max-height: 100px; overflow:hidden; float: left;";
+                    $("#sidebar").append("<a href='" + data[i][1] + "'><img style='"+style+"' src='" + data[i][1] + "'/></a>");
                 }
             })
             .error(function() { alert("error"); });
