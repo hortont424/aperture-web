@@ -19,14 +19,16 @@
 </li>
 #end def
 
-<div id="demo1" class="demo" style="position: fixed; top: 0px; left: 0px; width: 300px; bottom: 0px; background-color: #eee; overflow-x: hidden; overflow-y: auto; border-right: 1px solid #999;">
+<img src="buttonbar.png" style="position: fixed; top: 0px; left: 0px; width: 300px; height: 48px;">
+<div style="position: fixed; top: 0px; left: 75px; right: 150px; width: 75px; height: 48px; bottom: 48px; background-color: rgba(255, 255, 255, 0.5); z-index: 5;"></div>
+<div id="demo1" class="demo" style="position: fixed; top: 48px; left: 0px; width: 300px; bottom: 0px; background-color: #eee; overflow-x: hidden; overflow-y: auto; border-right: 1px solid #999;">
     <ul>
         #for $folder in $root_folder.child_folders
             $generateFolderList($folder, True)
         #end for
     </ul>
 </div>
-<div id="sidebar" style="position:fixed; top:0px; left: 301px; right:0px; bottom: 0px; overflow-y: auto; background-color: #3c3c3c; padding: 10px 20px;">
+<div id="sidebar" style="position:fixed; top:0px; left: 300px; right:0px; bottom: 0px; overflow-y: auto; background-color: #3c3c3c; padding: 10px 20px;">
 </div>
 <script type="text/javascript" src="base.js"></script>
 </body>
